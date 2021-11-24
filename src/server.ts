@@ -5,25 +5,17 @@ import app from './startup/app';
 import * as express from 'express';
 import bodyParser = require("body-parser");
 import { hostname } from "os";
+import { nextTick } from "process";
+
 
 function loggerMiddleware(request: express.Request, response:express.Response, next:express.NextFunction){
     console.log(request.method, request.url, request.body);
     next();
 }
 
-/*const server = express();
-
-//server.use(loggerMiddleware);
-
-server.use(bodyParser.json());
-server.get('/', (req,res) => {
-    res.send({//req.body,
-        hostname: req.hostname,
-        method: req.method,
-    });
-});
-
-server.listen(5000, ()=> console.log("Server is running..."));*/
+/*
+const server=new App( [ new HomeController() ], 5000);
+server.listen();*/
 
 const server = http.createServer(app);
 server.listen(app.get("port"), () => {
@@ -31,3 +23,4 @@ server.listen(app.get("port"), () => {
     const bind = address.port ? `port ${address.port}` : `pipe ${address}`;
     console.log(`Listening on ${bind}`);
 });
+
