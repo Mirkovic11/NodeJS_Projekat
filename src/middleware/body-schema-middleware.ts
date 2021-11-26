@@ -26,7 +26,7 @@ export const requireBody = (schema: any) => async (request: Request, response: R
     const errors = getValidationErrors(body, schema);
 
     if (errors){
-        response.send(new BadRequestException());
+        response.send(new BadRequestException("Bad req"));
         return;
     }
     else{

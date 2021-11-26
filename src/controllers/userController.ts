@@ -5,6 +5,7 @@ import Controller from '../interfaces/contoller';
 import { requireBody } from '../middleware/body-schema-middleware';
 import { asyncErrorHandler } from '../middleware/error-middleware';
 import { User } from '../database';
+
 const userRouter=Router();
 userRouter.get('/:usname', async(req:Request, res:Response, next:NextFunction)=> {
 
@@ -25,6 +26,49 @@ userRouter.get('/:usname', async(req:Request, res:Response, next:NextFunction)=>
 
 });
 
+userRouter.put("/:id", async(req:Request, res:Response)=> {
+
+    let poruka="";
+    try
+    {
+        const id=req.params.id; //where
+        const pass=req.body.password; //set
+
+        await User.update(
+            { password: pass},
+            { where: {
+                id: id
+            }});
+
+        poruka="password updated!"
+    }catch(error:any)
+    {
+        console.error(error.message);
+        poruka=error.message;
+    }
+
+    res.send(poruka);
+});
+
+
+userRouter.delete('/:usname', async(req:Request, res:Response)=>{
+
+    let poruka="";
+
+    try
+    {
+        const usname=req.params.usname;
+
+        await User.destroy({where: {username:usname}});
+        poruka="user "+"'"+usname+"'"+ "successfully deleted!";
+
+    }catch(err:any)
+    {
+        poruka=err.message;
+    }
+
+    res.send(poruka);
+});
 userRouter.get('/',async(req:Request, res:Response, next:NextFunction)=> {
     let user=null;
    try
@@ -57,20 +101,27 @@ const schema= {
 }
 
 userRouter.post('/', requireBody(schema),async(req:Request, res:Response, next:NextFunction)=> {
-       const newUser = await User.create({
-        
-        id: 2,
-        username: "Johnny",
-        password: "123546",
-        firstname: "ZEKS",
-        lastname: "John",
-        email: "haha",
-        type: "Admin"
-      });
-    const user:User=req.body;
+    let poruka="";
+    const  user = req.body;
+    console.log("user ", user)
+    try
+    {
+        await User.create({ id: 3,
+            username: "Johnny",
+            password: "123546",
+            firstname: "ZEKS",
+            lastname: "John",
+            email: "haha",
+            type: "Admin"});
 
+            poruka="all good";
+    }catch(err:any)
+    {
+        console.error(err.message);
+        poruka=err.message;
+    }
 
-    res.send("Successfully added");
+    res.send(poruka);
 });
 
 

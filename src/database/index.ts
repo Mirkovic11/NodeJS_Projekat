@@ -4,7 +4,7 @@ import User from "./user-table";
 
 const port =5432;
 
-const sequelize = new Sequelize('db', 'usname', 'pass', {
+const sequelize = new Sequelize('postgres', 'postgres', 'postgres', {
     host: 'localhost',
     dialect: 'postgres'
   });
