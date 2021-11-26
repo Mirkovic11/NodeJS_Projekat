@@ -4,7 +4,8 @@ import routing from "./routing";
 import Controller from "../interfaces/contoller";
 import  authentication  from "../middleware/auth-middleware";
 import userRouter from '../controllers/userController';
-
+import test from "../database";
+import { User } from "../database";
 const app = express();
 
 app.use(logger); //prvo se pozove ovaj middleware, nakon toga ostali definisani u index-router.ts
@@ -20,7 +21,12 @@ app.use(bodyParser.urlencoded({extended:false}));
 
 app.set("port", process.env.PORT || 5000);
 
+//app.use(test);
+//app.use(User);
 app.use(routing);
+
 app.use('/home', authentication, userRouter);
+
+
 
 export default app;

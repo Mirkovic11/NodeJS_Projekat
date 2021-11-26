@@ -1,49 +1,43 @@
 import {Router, Request, Response, NextFunction, response} from 'express';
-import { User } from '../models/user';
+//import { User } from '../models/user';
 import { UserType } from '../interfaces/userType';
 import Controller from '../interfaces/contoller';
 import { requireBody } from '../middleware/body-schema-middleware';
 import { asyncErrorHandler } from '../middleware/error-middleware';
-
+import { User } from '../database';
 const userRouter=Router();
-const lista=new Array<User>(new User(1,"zeksi","password", "Zeljana", "Mirkovic", "zm@gmail.com", UserType.Administrator));
+userRouter.get('/:usname', async(req:Request, res:Response, next:NextFunction)=> {
 
-
-function checking(list:Array<User>, data:string): User{
-    let user=new User(-1,"","","","","",UserType.None);
-    for(let item of list){
-        if(item.username===data){
-            user=item;
-            console.log("nasaooooooooooooooooooooooooooooo ");
-            break;
+        let user=null;
+        const usname = req.params.usname;
+        console.log(usname);
+        try{
+             user=await User.findAll( { where: {username: usname}});
+        }catch(err:any){
+            console.error(err.message);
+            
         }
-    }
-    return user;
-    
-}
 
-userRouter.get('/:id', (req:Request, res:Response, next:NextFunction)=> {
-    console.log("primjen get ime zahtjev");
-        console.log(req.params.id);
-        console.log(res.locals);
-        const name:string= req.params.id;
-
-        const us=checking(lista,name);
-
-        if(us.id!=-1){
-            res.send("Hello "+us.username);
-        }else {
-            res.send("Ne postoji takav korisnik");
-        }
+        var body=["Data of the user with username "+"'"+usname+"'", user];
+        res.send(body);
       
 
 
 });
 
-userRouter.get('/',(req:Request, res:Response, next:NextFunction)=> {
-    console.log("primjen get zahtjev");
-        var body=["ruta GET radi", lista];
-        res.send(body);
+userRouter.get('/',async(req:Request, res:Response, next:NextFunction)=> {
+    let user=null;
+   try
+   {
+    user=await User.findAll();   
+   }catch(err : any)
+   {
+    console.error(err.message);
+   }
+    
+   var body=["List of all users", user];
+   res.send(body);
+       
    
 });
 
@@ -62,13 +56,21 @@ const schema= {
     required: ["id","username","password", "firstName", "lastName","email","type"]
 }
 
-userRouter.post('/', requireBody(schema),(req:Request, res:Response, next:NextFunction)=> {
-    console.log("Primjen post zahtjev");
+userRouter.post('/', requireBody(schema),async(req:Request, res:Response, next:NextFunction)=> {
+       const newUser = await User.create({
+        
+        id: 2,
+        username: "Johnny",
+        password: "123546",
+        firstname: "ZEKS",
+        lastname: "John",
+        email: "haha",
+        type: "Admin"
+      });
     const user:User=req.body;
 
-    lista.push(user);
-    var body=["Uspjesno primljeno", lista];
-    res.send(body);
+
+    res.send("Successfully added");
 });
 
 

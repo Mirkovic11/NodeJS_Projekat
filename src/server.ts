@@ -13,14 +13,13 @@ function loggerMiddleware(request: express.Request, response:express.Response, n
     next();
 }
 
-/*
-const server=new App( [ new HomeController() ], 5000);
-server.listen();*/
+
 
 const server = http.createServer(app);
-server.listen(app.get("port"), () => {
+server.listen(app.get("port"), async() => {
     const address = <AddressInfo>server.address();
     const bind = address.port ? `port ${address.port}` : `pipe ${address}`;
+
     console.log(`Listening on ${bind}`);
 });
 
